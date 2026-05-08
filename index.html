@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProHub — 50 Productivity Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#090c14;--bg2:#0d1120;--bg3:#111827;
+  --glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#e8eaf0;--text2:#8b92a8;--text3:#555e78;
+  --accent:#5b8def;--accent2:#7c5ce4;--accent3:#00d4aa;
+  --red:#ef4f6a;--yellow:#f6c90e;--green:#00d4aa;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+  --r:14px;--r2:10px;--shadow:0 8px 32px rgba(0,0,0,.5);
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden}
+button{font-family:var(--font-body);cursor:pointer;border:none;outline:none}
+input,textarea,select{font-family:var(--font-body);outline:none;border:none;background:none;color:var(--text)}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+
+/* ── BACKGROUND ── */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.35}
+
+/* ── LAYOUT ── */
+#app{position:relative;z-index:1}
+#header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 28px;background:rgba(9,12,20,.85);
+  backdrop-filter:blur(20px);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;gap:16px;
+}
+#header h1{font-family:var(--font-head);font-size:1.3rem;font-weight:800;letter-spacing:-.01em;
+  background:linear-gradient(135deg,#fff 0%,var(--accent) 60%,var(--accent2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+#search-wrap{position:relative;flex:1;max-width:380px}
+#search{width:100%;padding:9px 16px 9px 38px;background:var(--glass2);
+  border:1px solid var(--border);border-radius:99px;font-size:.9rem;color:var(--text);transition:.2s}
+#search:focus{border-color:var(--accent);background:var(--glass)}
+#search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px}
+#tool-count{font-size:.78rem;color:var(--text3);white-space:nowrap}
+
+/* ── DASHBOARD ── */
+#dashboard{padding:28px;max-width:1400px;margin:0 auto}
+.section-label{font-family:var(--font-head);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin:24px 0 12px;padding-left:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+
+/* ── TOOL CARD ── */
+.card{
+  background:var(--glass);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px 16px 16px;cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .18s,border-color .18s,background .18s;
+  display:flex;flex-direction:column;gap:10px;
+}
+.card::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  background:radial-gradient(circle at 60% 20%,rgba(91,141,239,.15),transparent 70%);
+  transition:opacity .25s;
+}
+.card:hover{transform:translateY(-3px);border-color:var(--border2);background:var(--glass2)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:1.6rem;line-height:1}
+.card-name{font-family:var(--font-head);font-size:.82rem;font-weight:700;color:var(--text)}
+.card-desc{font-size:.73rem;color:var(--text3);line-height:1.4}
+.card-tag{
+  align-self:flex-start;font-size:.62rem;padding:2px 8px;border-radius:99px;
+  font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:auto;
+}
+
+/* ── TOOL PANEL ── */
+#panel{
+  position:fixed;inset:0;z-index:200;
+  display:none;align-items:flex-start;justify-content:center;
+  padding:20px;background:rgba(5,7,15,.7);backdrop-filter:blur(12px);overflow-y:auto;
+}
+#panel.open{display:flex}
+#panel-box{
+  width:100%;max-width:760px;background:var(--bg2);
+  border:1px solid var(--border2);border-radius:20px;
+  overflow:hidden;box-shadow:var(--shadow);animation:slideUp .25s ease;
+  margin:auto;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+#panel-head{
+  display:flex;align-items:center;gap:12px;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+#panel-icon{font-size:1.4rem}
+#panel-title{font-family:var(--font-head);font-size:1.05rem;font-weight:700;flex:1}
+#panel-close{
+  width:32px;height:32px;border-radius:8px;background:var(--glass2);
+  color:var(--text2);font-size:1.1rem;display:flex;align-items:center;justify-content:center;
+  transition:.15s;
+}
+#panel-close:hover{background:var(--red);color:#fff}
+#panel-body{padding:22px;min-height:320px}
+
+/* ── SHARED TOOL STYLES ── */
+.t-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.t-input{
+  flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r2);color:var(--text);font-size:.9rem;transition:.2s;min-width:100px;
+}
+.t-input:focus{border-color:var(--accent)}
+.t-textarea{
+  width:100%;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r2);color:var(--text);font-size:.88rem;resize:vertical;
+  min-height:120px;line-height:1.6;transition:.2s;
+}
+.t-textarea:focus{border-color:var(--accent)}
+.t-select{
+  padding:10px 14px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r2);color:var(--text);font-size:.88rem;
+}
+.btn{
+  padding:9px 18px;border-radius:var(--r2);font-size:.85rem;font-weight:600;
+  transition:.15s;display:inline-flex;align-items:center;gap:6px;
+}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#4a7de0;transform:translateY(-1px)}
+.btn-ghost{background:var(--glass2);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:rgba(239,79,106,.15);color:var(--red);border:1px solid rgba(239,79,106,.3)}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-green{background:rgba(0,212,170,.15);color:var(--green);border:1px solid rgba(0,212,170,.3)}
+.btn-green:hover{background:var(--green);color:#111}
+.t-out{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);
+  padding:14px;margin-top:10px;font-size:.88rem;line-height:1.6;min-height:48px;word-break:break-all;
+}
+.t-label{font-size:.75rem;font-weight:600;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+.t-big{font-family:var(--font-head);font-size:3rem;font-weight:800;text-align:center;
+  color:var(--accent);letter-spacing:-.02em;margin:12px 0}
+.t-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 12px;
+  background:var(--glass2);border:1px solid var(--border);border-radius:99px;
+  font-size:.78rem;color:var(--text2);
+}
+.t-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.t-list li{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);
+  font-size:.88rem;
+}
+.t-list li span{flex:1}
+.t-list li button{background:none;color:var(--text3);font-size:1rem;transition:.15s}
+.t-list li button:hover{color:var(--red)}
+.t-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.t-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.t-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.t-stat{
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);
+  padding:14px;text-align:center;
+}
+.t-stat .val{font-family:var(--font-head);font-size:1.5rem;font-weight:800;color:var(--accent)}
+.t-stat .lbl{font-size:.72rem;color:var(--text3);margin-top:2px}
+progress{width:100%;height:8px;border-radius:99px;overflow:hidden;border:none}
+progress::-webkit-progress-bar{background:var(--bg3);border-radius:99px}
+progress::-webkit-progress-value{background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}
+.tag-focus{background:rgba(246,201,14,.12);color:var(--yellow);border-color:rgba(246,201,14,.2)}
+.tag-timer{background:rgba(239,79,106,.12);color:var(--red);border-color:rgba(239,79,106,.2)}
+.tag-text{background:rgba(91,141,239,.12);color:var(--accent);border-color:rgba(91,141,239,.2)}
+.tag-util{background:rgba(124,92,228,.12);color:var(--accent2);border-color:rgba(124,92,228,.2)}
+.tag-life{background:rgba(0,212,170,.12);color:var(--green);border-color:rgba(0,212,170,.2)}
+.tag-create{background:rgba(255,119,68,.12);color:#ff7744;border-color:rgba(255,119,68,.2)}
+
+/* ── KANBAN ── */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kCol{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:12px;min-height:180px}
+.kCol h4{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);margin-bottom:10px}
+.kCard{background:var(--glass2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;
+  font-size:.82rem;margin-bottom:6px;cursor:grab;position:relative}
+.kCard button{position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  background:none;color:var(--text3);font-size:.9rem}
+.kCard button:hover{color:var(--red)}
+
+/* ── WHITEBOARD ── */
+#wb-canvas{border:1px solid var(--border);border-radius:var(--r2);cursor:crosshair;
+  width:100%;touch-action:none;display:block}
+.wb-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.wb-color{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s}
+.wb-color.active,.wb-color:hover{border-color:#fff}
+.wb-sz{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text2)}
+.wb-sz input{width:80px;accent-color:var(--accent)}
+
+/* ── FLASHCARD ── */
+.fc-card{
+  perspective:800px;cursor:pointer;min-height:180px;
+  border-radius:var(--r);margin:10px 0;
+}
+.fc-inner{width:100%;height:180px;position:relative;transform-style:preserve-3d;transition:transform .5s}
+.fc-card.flipped .fc-inner{transform:rotateY(180deg)}
+.fc-face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  text-align:center;font-size:1.05rem;border:1px solid var(--border);
+}
+.fc-front{background:linear-gradient(135deg,rgba(91,141,239,.1),rgba(124,92,228,.1))}
+.fc-back{background:linear-gradient(135deg,rgba(0,212,170,.1),rgba(91,141,239,.1));transform:rotateY(180deg)}
+
+/* ── EISENHOWER ── */
+.eisen{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.eQ{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:12px;min-height:120px}
+.eQ h4{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.eQ.q1 h4{color:var(--red)}
+.eQ.q2 h4{color:var(--accent)}
+.eQ.q3 h4{color:var(--yellow)}
+.eQ.q4 h4{color:var(--text3)}
+.eItem{font-size:.8rem;padding:4px 8px;background:var(--glass);border-radius:6px;margin-bottom:4px;
+  display:flex;align-items:center;gap:6px}
+.eItem button{background:none;color:var(--text3);margin-left:auto}
+.eItem button:hover{color:var(--red)}
+
+/* ── SPIN WHEEL ── */
+#spin-canvas{display:block;margin:0 auto;max-width:100%}
+
+/* ── MOOD TRACKER ── */
+.mood-btns{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.mood-btn{padding:10px 14px;border-radius:var(--r2);background:var(--glass2);
+  border:1px solid var(--border);font-size:1.1rem;transition:.15s;cursor:pointer}
+.mood-btn:hover,.mood-btn.selected{border-color:var(--accent);background:rgba(91,141,239,.15)}
+.mood-log{margin-top:12px;display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
+.mood-entry{display:flex;gap:10px;align-items:center;padding:8px 12px;
+  background:var(--bg3);border-radius:8px;font-size:.82rem;color:var(--text2)}
+
+/* ── GRADIENT GEN ── */
+.grad-preview{height:100px;border-radius:var(--r2);margin:12px 0;transition:.3s;
+  border:1px solid var(--border)}
+.grad-stops{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.grad-stop{width:36px;height:36px;border-radius:8px;cursor:pointer;border:2px solid var(--border);transition:.15s}
+.grad-stop:hover{border-color:#fff;transform:scale(1.1)}
+
+/* ── STICKY NOTES ── */
+.sticky-board{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.sticky{border-radius:var(--r2);padding:14px;min-height:110px;font-size:.83rem;line-height:1.5;
+  position:relative;word-break:break-word;border:1px solid transparent}
+.sticky textarea{width:100%;background:none;resize:none;color:#111;font-size:.82rem;
+  min-height:72px;line-height:1.5;border:none;outline:none;font-family:var(--font-body)}
+.sticky-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.15);
+  border:none;border-radius:50%;width:18px;height:18px;font-size:.75rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:#333}
+.sticky-del:hover{background:rgba(0,0,0,.35);color:#fff}
+
+/* ── FOCUS MODE ── */
+#focus-overlay{
+  position:fixed;inset:0;z-index:9999;background:#000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+}
+#focus-overlay.on{display:flex}
+#focus-time{font-family:var(--font-head);font-size:4rem;font-weight:800;color:var(--accent)}
+#focus-msg{font-size:1.1rem;color:var(--text2)}
+
+/* ── TYPEWRITER ── */
+#tw-area{min-height:200px;font-size:1rem;line-height:1.8;padding:16px;
+  background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  #header{padding:12px 16px}
+  #dashboard{padding:16px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+  .t-big{font-size:2.2rem}
+  .kanban{grid-template-columns:1fr}
+  .eisen{grid-template-columns:1fr}
+  .t-grid2,.t-grid3{grid-template-columns:1fr}
+  #panel{padding:0}
+  #panel-box{border-radius:0;min-height:100vh}
+}
+
+/* ── NO RESULTS ── */
+#no-results{display:none;text-align:center;padding:60px 20px;color:var(--text3)}
+#no-results .nr-icon{font-size:3rem;margin-bottom:16px}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<div id="app">
+  <header id="header">
+    <h1>⚡ ProHub</h1>
+    <div id="search-wrap">
+      <span id="search-icon">🔍</span>
+      <input id="search" type="text" placeholder="Search 50 tools…" autocomplete="off" oninput="filterTools()">
+    </div>
+    <span id="tool-count">50 tools</span>
+  </header>
+
+  <div id="dashboard">
+    <div id="no-results">
+      <div class="nr-icon">🔎</div>
+      <div>No tools found. Try a different keyword.</div>
+    </div>
+    <!-- Cards injected by JS -->
+  </div>
+</div>
+
+<!-- TOOL PANEL -->
+<div id="panel">
+  <div id="panel-box">
+    <div id="panel-head">
+      <span id="panel-icon"></span>
+      <span id="panel-title"></span>
+      <button id="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <div id="panel-body"></div>
+  </div>
+</div>
+
+<!-- FOCUS MODE OVERLAY -->
+<div id="focus-overlay">
+  <div id="focus-time">00:00</div>
+  <div id="focus-msg">Stay focused. You've got this. 🎯</div>
+  <button class="btn btn-ghost" onclick="exitFocus()">Exit Focus Mode</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   ANIMATED BACKGROUND
+═══════════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('bg-canvas'),ctx=c.getContext('2d');
+  let w,h,pts=[];
+  function resize(){w=c.width=innerWidth;h=c.height=innerHeight;pts=Array.from({length:60},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.5+.5}))}
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>w)p.vx*=-1;
+      if(p.y<0||p.y>h)p.vy*=-1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.28);
+      ctx.fillStyle='rgba(91,141,239,.6)';ctx.fill();
+    });
+    pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{
+      const d=Math.hypot(a.x-b.x,a.y-b.y);
+      if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+        ctx.strokeStyle=`rgba(91,141,239,${.12*(1-d/120)})`;ctx.lineWidth=.8;ctx.stroke();}
+    }));
+    requestAnimationFrame(draw);
+  }
+  resize();draw();window.addEventListener('resize',resize);
+})();
+
+/* ═══════════════════════════════════════════
+   TOOL DEFINITIONS
+═══════════════════════════════════════════ */
+const TOOLS=[
+  // FOCUS
+  {id:'todo',icon:'✅',name:'To-Do List',desc:'Add, check, and clear tasks',tag:'focus',color:'tag-focus'},
+  {id:'pomodoro',icon:'🍅',name:'Pomodoro Timer',desc:'25/5 focus sessions',tag:'focus',color:'tag-focus'},
+  {id:'focus',icon:'🎯',name:'Focus Mode',desc:'Distraction-free full screen',tag:'focus',color:'tag-focus'},
+  {id:'daily',icon:'📋',name:'Daily Checklist',desc:'Today\'s recurring tasks',tag:'focus',color:'tag-focus'},
+  {id:'eisenhower',icon:'🧭',name:'Eisenhower Matrix',desc:'Urgent vs important tasks',tag:'focus',color:'tag-focus'},
+  {id:'kanban',icon:'📊',name:'Kanban Board',desc:'To-do, doing, done columns',tag:'focus',color:'tag-focus'},
+  {id:'goals',icon:'🏆',name:'Goal Tracker',desc:'Set and track your goals',tag:'focus',color:'tag-focus'},
+  {id:'weekreview',icon:'📅',name:'Weekly Review',desc:'Reflect on your week',tag:'focus',color:'tag-focus'},
+  {id:'braindump',icon:'🧠',name:'Brain Dump',desc:'Get everything out of your head',tag:'focus',color:'tag-focus'},
+  {id:'session',icon:'⏱️',name:'Session Tracker',desc:'Log your work sessions',tag:'focus',color:'tag-focus'},
+  // TIMERS
+  {id:'stopwatch',icon:'⏱',name:'Stopwatch',desc:'Start, stop, lap timer',tag:'timer',color:'tag-timer'},
+  {id:'countdown',icon:'⏳',name:'Countdown Timer',desc:'Set a custom countdown',tag:'timer',color:'tag-timer'},
+  {id:'break',icon:'☕',name:'Break Reminder',desc:'Hourly nudge to rest',tag:'timer',color:'tag-timer'},
+  {id:'timezone',icon:'🌍',name:'Time Zone Viewer',desc:'Compare world times',tag:'timer',color:'tag-timer'},
+  // TEXT
+  {id:'notes',icon:'📝',name:'Notes App',desc:'Quick markdown-ish notes',tag:'text',color:'tag-text'},
+  {id:'wordcount',icon:'🔢',name:'Word Counter',desc:'Count words, chars, lines',tag:'text',color:'tag-text'},
+  {id:'formatter',icon:'✨',name:'Text Formatter',desc:'Upper/lower/title/trim',tag:'text',color:'tag-text'},
+  {id:'markdown',icon:'📄',name:'Markdown Preview',desc:'Write and preview markdown',tag:'text',color:'tag-text'},
+  {id:'tts',icon:'🔊',name:'Text-to-Speech',desc:'Speak any text aloud',tag:'text',color:'tag-text'},
+  {id:'stt',icon:'🎤',name:'Speech-to-Text',desc:'Dictate text via mic',tag:'text',color:'tag-text'},
+  {id:'typewriter',icon:'⌨️',name:'Typewriter Notes',desc:'Focus typing with autosave',tag:'text',color:'tag-text'},
+  {id:'flashcards',icon:'🃏',name:'Flashcards',desc:'Create and flip study cards',tag:'text',color:'tag-text'},
+  {id:'json',icon:'{ }',name:'JSON Formatter',desc:'Beautify or minify JSON',tag:'text',color:'tag-text'},
+  {id:'tts2',icon:'📢',name:'Affirmation Gen',desc:'Daily positive affirmations',tag:'text',color:'tag-text'},
+  {id:'quotes',icon:'💬',name:'Motivational Quotes',desc:'Random inspiring quotes',tag:'text',color:'tag-text'},
+  // UTILITIES
+  {id:'calc',icon:'🧮',name:'Calculator',desc:'Quick arithmetic',tag:'util',color:'tag-util'},
+  {id:'password',icon:'🔐',name:'Password Gen',desc:'Secure random passwords',tag:'util',color:'tag-util'},
+  {id:'converter',icon:'⚖️',name:'Unit Converter',desc:'Length, weight, temp & more',tag:'util',color:'tag-util'},
+  {id:'qr',icon:'▦',name:'QR Code Gen',desc:'Generate QR for any text',tag:'util',color:'tag-util'},
+  {id:'color',icon:'🎨',name:'Color Picker',desc:'Pick and copy hex/rgb',tag:'util',color:'tag-util'},
+  {id:'gradient',icon:'🌈',name:'Gradient Gen',desc:'Build CSS gradients',tag:'util',color:'tag-util'},
+  {id:'random',icon:'🎲',name:'Random Number',desc:'Generate random numbers',tag:'util',color:'tag-util'},
+  {id:'decision',icon:'🎡',name:'Decision Maker',desc:'Spin wheel random choice',tag:'util',color:'tag-util'},
+  {id:'filename',icon:'🗂️',name:'Filename Cleaner',desc:'Sanitize file names',tag:'util',color:'tag-util'},
+  {id:'idea',icon:'💡',name:'Idea Generator',desc:'Random creative prompts',tag:'util',color:'tag-util'},
+  {id:'urllist',icon:'🔗',name:'URL Opener',desc:'Open a list of URLs',tag:'util',color:'tag-util'},
+  {id:'bookmark',icon:'⭐',name:'Bookmarks',desc:'Save and label links',tag:'util',color:'tag-util'},
+  {id:'quicklinks',icon:'🚀',name:'Quick Links',desc:'Dashboard of favorite links',tag:'util',color:'tag-util'},
+  {id:'clipboard',icon:'📋',name:'Clipboard Manager',desc:'Store text snippets',tag:'util',color:'tag-util'},
+  {id:'reminder',icon:'🔔',name:'Reminders',desc:'Local browser reminders',tag:'util',color:'tag-util'},
+  // LIFE
+  {id:'habit',icon:'🔁',name:'Habit Tracker',desc:'Daily habit streaks',tag:'life',color:'tag-life'},
+  {id:'water',icon:'💧',name:'Water Tracker',desc:'Log daily water intake',tag:'life',color:'tag-life'},
+  {id:'mood',icon:'😊',name:'Mood Tracker',desc:'Log and view your mood',tag:'life',color:'tag-life'},
+  {id:'expense',icon:'💰',name:'Expense Tracker',desc:'Simple budget log',tag:'life',color:'tag-life'},
+  {id:'planner',icon:'📆',name:'Daily Planner',desc:'Schedule your day',tag:'life',color:'tag-life'},
+  {id:'calendar',icon:'🗓️',name:'Calendar',desc:'Mini monthly calendar',tag:'life',color:'tag-life'},
+  // CREATIVE
+  {id:'whiteboard',icon:'🖊️',name:'Whiteboard',desc:'Draw freely on canvas',tag:'create',color:'tag-create'},
+  {id:'sticky',icon:'🟡',name:'Sticky Notes',desc:'Colorful note board',tag:'create',color:'tag-create'},
+  {id:'dimmer',icon:'🌑',name:'Screen Dimmer',desc:'Dim screen for night mode',tag:'create',color:'tag-create'},
+];
+
+const CATEGORIES=[
+  {key:'focus',label:'Focus & Planning'},
+  {key:'timer',label:'Time Management'},
+  {key:'text',label:'Text & Writing'},
+  {key:'util',label:'Utilities'},
+  {key:'life',label:'Life & Wellness'},
+  {key:'create',label:'Creative'},
+];
+
+/* ═══════════════════════════════════════════
+   RENDER DASHBOARD
+═══════════════════════════════════════════ */
+function renderDashboard(filter=''){
+  const dash=document.getElementById('dashboard');
+  const f=filter.toLowerCase().trim();
+  const filtered=TOOLS.filter(t=>!f||t.name.toLowerCase().includes(f)||t.desc.toLowerCase().includes(f)||t.tag.includes(f));
+  document.getElementById('no-results').style.display=filtered.length?'none':'block';
+  // Remove old sections
+  dash.querySelectorAll('.section-label,.grid').forEach(e=>e.remove());
+  if(f){
+    const g=document.createElement('div');g.className='grid';
+    filtered.forEach(t=>g.appendChild(makeCard(t)));
+    dash.appendChild(g);
+    document.getElementById('tool-count').textContent=`${filtered.length} tools`;
+    return;
+  }
+  document.getElementById('tool-count').textContent='50 tools';
+  CATEGORIES.forEach(cat=>{
+    const items=TOOLS.filter(t=>t.tag===cat.key);
+    if(!items.length)return;
+    const lbl=document.createElement('div');lbl.className='section-label';lbl.textContent=cat.label;
+    dash.appendChild(lbl);
+    const g=document.createElement('div');g.className='grid';
+    items.forEach(t=>g.appendChild(makeCard(t)));
+    dash.appendChild(g);
+  });
+}
+function makeCard(t){
+  const c=document.createElement('div');c.className='card';c.dataset.id=t.id;
+  c.innerHTML=`<div class="card-icon">${t.icon}</div><div class="card-name">${t.name}</div><div class="card-desc">${t.desc}</div><span class="card-tag ${t.color}">${t.tag}</span>`;
+  c.onclick=()=>openTool(t.id);
+  return c;
+}
+function filterTools(){renderDashboard(document.getElementById('search').value)}
+renderDashboard();
+
+/* ═══════════════════════════════════════════
+   PANEL
+═══════════════════════════════════════════ */
+function openTool(id){
+  const t=TOOLS.find(x=>x.id===id);
+  document.getElementById('panel-icon').textContent=t.icon;
+  document.getElementById('panel-title').textContent=t.name;
+  document.getElementById('panel-body').innerHTML=render(id);
+  document.getElementById('panel').classList.add('open');
+  document.body.style.overflow='hidden';
+  afterRender(id);
+}
+function closePanel(){
+  document.getElementById('panel').classList.remove('open');
+  document.body.style.overflow='';
+  stopPomodoro();stopStopwatch();stopCountdown();stopBreak();
+}
+document.getElementById('panel').addEventListener('click',function(e){if(e.target===this)closePanel()});
+
+/* ═══════════════════════════════════════════
+   LOCALSTORAGE HELPERS
+═══════════════════════════════════════════ */
+const ls={
+  get:(k,d=null)=>{try{const v=localStorage.getItem('ph_'+k);return v?JSON.parse(v):d}catch{return d}},
+  set:(k,v)=>{try{localStorage.setItem('ph_'+k,JSON.stringify(v))}catch{}}
+};
+
+/* ═══════════════════════════════════════════
+   TOOL RENDERERS
+═══════════════════════════════════════════ */
+function render(id){
+  switch(id){
+    case 'todo':return renderTodo();
+    case 'pomodoro':return renderPomodoro();
+    case 'focus':return renderFocusMode();
+    case 'daily':return renderDaily();
+    case 'eisenhower':return renderEisenhower();
+    case 'kanban':return renderKanban();
+    case 'goals':return renderGoals();
+    case 'weekreview':return renderWeekReview();
+    case 'braindump':return renderBrainDump();
+    case 'session':return renderSession();
+    case 'stopwatch':return renderStopwatch();
+    case 'countdown':return renderCountdown();
+    case 'break':return renderBreak();
+    case 'timezone':return renderTimezone();
+    case 'notes':return renderNotes();
+    case 'wordcount':return renderWordCount();
+    case 'formatter':return renderFormatter();
+    case 'markdown':return renderMarkdown();
+    case 'tts':return renderTTS();
+    case 'stt':return renderSTT();
+    case 'typewriter':return renderTypewriter();
+    case 'flashcards':return renderFlashcards();
+    case 'json':return renderJSON();
+    case 'tts2':return renderAffirmations();
+    case 'quotes':return renderQuotes();
+    case 'calc':return renderCalc();
+    case 'password':return renderPassword();
+    case 'converter':return renderConverter();
+    case 'qr':return renderQR();
+    case 'color':return renderColor();
+    case 'gradient':return renderGradient();
+    case 'random':return renderRandom();
+    case 'decision':return renderDecision();
+    case 'filename':return renderFilename();
+    case 'idea':return renderIdea();
+    case 'urllist':return renderURLList();
+    case 'bookmark':return renderBookmarks();
+    case 'quicklinks':return renderQuickLinks();
+    case 'clipboard':return renderClipboard();
+    case 'reminder':return renderReminder();
+    case 'habit':return renderHabit();
+    case 'water':return renderWater();
+    case 'mood':return renderMood();
+    case 'expense':return renderExpense();
+    case 'planner':return renderPlanner();
+    case 'calendar':return renderCalendar();
+    case 'whiteboard':return renderWhiteboard();
+    case 'sticky':return renderSticky();
+    case 'dimmer':return renderDimmer();
+    default:return '<p>Tool coming soon!</p>';
+  }
+}
+
+/* ─── TODO ─── */
+function renderTodo(){
+  const items=ls.get('todo',[]);
+  return `<div class="t-row">
+    <input class="t-input" id="todo-in" placeholder="Add a task…" onkeydown="if(event.key==='Enter')addTodo()">
+    <button class="btn btn-primary" onclick="addTodo()">Add</button>
+  </div>
+  <ul class="t-list" id="todo-list"></ul>
+  <div style="margin-top:12px;display:flex;gap:8px">
+    <button class="btn btn-ghost" onclick="clearDone()">Clear Done</button>
+    <button class="btn btn-danger" onclick="ls.set('todo',[]);renderTodoList()">Clear All</button>
+  </div>`;
+}
+function afterRenderTodo(){renderTodoList()}
+function renderTodoList(){
+  const ul=document.getElementById('todo-list');if(!ul)return;
+  const items=ls.get('todo',[]);
+  ul.innerHTML=items.map((it,i)=>`<li>
+    <input type="checkbox" ${it.done?'checked':''} onchange="toggleTodo(${i})" style="accent-color:var(--accent);width:16px;height:16px">
+    <span style="${it.done?'text-decoration:line-through;opacity:.4':''}">${escHtml(it.text)}</span>
+    <button onclick="removeTodo(${i})">✕</button>
+  </li>`).join('');
+}
+function addTodo(){const el=document.getElementById('todo-in');if(!el.value.trim())return;const a=ls.get('todo',[]);a.unshift({text:el.value.trim(),done:false});ls.set('todo',a);el.value='';renderTodoList()}
+function toggleTodo(i){const a=ls.get('todo',[]);a[i].done=!a[i].done;ls.set('todo',a);renderTodoList()}
+function removeTodo(i){const a=ls.get('todo',[]);a.splice(i,1);ls.set('todo',a);renderTodoList()}
+function clearDone(){ls.set('todo',ls.get('todo',[]).filter(x=>!x.done));renderTodoList()}
+
+/* ─── POMODORO ─── */
+let pomInt=null,pomSec=0,pomMode='work',pomRound=0;
+function renderPomodoro(){
+  return `<div style="text-align:center">
+    <div class="t-big" id="pom-display">25:00</div>
+    <div style="margin:8px 0 20px;color:var(--text3);font-size:.9rem" id="pom-label">Work Session</div>
+    <div class="t-row" style="justify-content:center">
+      <button class="btn btn-primary" id="pom-btn" onclick="togglePomodoro()">▶ Start</button>
+      <button class="btn btn-ghost" onclick="resetPomodoro()">↺ Reset</button>
+    </div>
+    <div class="t-grid3" style="margin-top:20px">
+      <div class="t-stat"><div class="val" id="pom-rounds">0</div><div class="lbl">Sessions</div></div>
+      <div class="t-stat"><div class="val" id="pom-focus">0m</div><div class="lbl">Focus Time</div></div>
+      <div class="t-stat"><div class="val" id="pom-breaks">0</div><div class="lbl">Breaks</div></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-ghost" onclick="setPomDur(25,'Work')">25m Work</button>
+      <button class="btn btn-ghost" onclick="setPomDur(5,'Short Break')">5m Break</button>
+      <button class="btn btn-ghost" onclick="setPomDur(15,'Long Break')">15m Break</button>
+    </div>
+  </div>`;
+}
+function setPomDur(m,label){pomSec=m*60;pomMode=label;updatePomDisplay();document.getElementById('pom-label').textContent=label}
+function togglePomodoro(){
+  if(pomInt){clearInterval(pomInt);pomInt=null;document.getElementById('pom-btn').textContent='▶ Resume';return}
+  if(pomSec===0)pomSec=25*60;
+  pomInt=setInterval(()=>{
+    pomSec--;updatePomDisplay();
+    if(pomSec<=0){clearInterval(pomInt);pomInt=null;pomRound++;
+      document.getElementById('pom-rounds').textContent=pomRound;
+      document.getElementById('pom-focus').textContent=(pomRound*25)+'m';
+      alert('Session complete! 🎉');pomSec=25*60;updatePomDisplay();}
+  },1000);
+  document.getElementById('pom-btn').textContent='⏸ Pause';
+}
+function stopPomodoro(){clearInterval(pomInt);pomInt=null;}
+function resetPomodoro(){stopPomodoro();pomSec=25*60;updatePomDisplay();document.getElementById('pom-btn').textContent='▶ Start';}
+function updatePomDisplay(){const el=document.getElementById('pom-display');if(el)el.textContent=fmtTime(pomSec)}
+
+/* ─── FOCUS MODE ─── */
+let focusInt=null,focusSec=0;
+function renderFocusMode(){
+  return `<div style="text-align:center;padding:20px 0">
+    <p style="color:var(--text2);margin-bottom:20px">Enter a fullscreen focus session. Press <b>Esc</b> or the button to exit.</p>
+    <div class="t-row" style="justify-content:center">
+      <input class="t-input" id="focus-dur" type="number" value="25" min="1" max="120" style="width:100px;text-align:center">
+      <span style="color:var(--text2)">minutes</span>
+    </div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="startFocus()">🎯 Enter Focus Mode</button>
+  </div>`;
+}
+function startFocus(){
+  const min=parseInt(document.getElementById('focus-dur').value)||25;
+  focusSec=min*60;
+  document.getElementById('focus-overlay').classList.add('on');
+  updateFocusDisplay();
+  focusInt=setInterval(()=>{focusSec--;updateFocusDisplay();if(focusSec<=0)exitFocus();},1000);
+}
+function updateFocusDisplay(){const el=document.getElementById('focus-time');if(el)el.textContent=fmtTime(focusSec)}
+function exitFocus(){clearInterval(focusInt);focusInt=null;document.getElementById('focus-overlay').classList.remove('on')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')exitFocus()});
+
+/* ─── DAILY CHECKLIST ─── */
+const DAILY_DEFAULTS=['Morning journal','Exercise','Healthy meals','Read 30 min','Meditate','Plan tomorrow'];
+function renderDaily(){
+  if(!ls.get('daily'))ls.set('daily',DAILY_DEFAULTS.map(t=>({text:t,done:false})));
+  return `<div class="t-row">
+    <input class="t-input" id="daily-in" placeholder="Add daily task…" onkeydown="if(event.key==='Enter')addDaily()">
+    <button class="btn btn-primary" onclick="addDaily()">Add</button>
+  </div>
+  <ul class="t-list" id="daily-list"></ul>
+  <button class="btn btn-ghost" style="margin-top:12px" onclick="resetDaily()">↺ Reset All</button>`;
+}
+function afterRenderDaily(){renderDailyList()}
+function renderDailyList(){
+  const ul=document.getElementById('daily-list');if(!ul)return;
+  const items=ls.get('daily',[]);
+  ul.innerHTML=items.map((it,i)=>`<li>
+    <input type="checkbox" ${it.done?'checked':''} onchange="toggleDaily(${i})" style="accent-color:var(--accent);width:16px;height:16px">
+    <span style="${it.done?'text-decoration:line-through;opacity:.4':''}">${escHtml(it.text)}</span>
+    <button onclick="removeDaily(${i})">✕</button>
+  </li>`).join('');
+}
+function addDaily(){const el=document.getElementById('daily-in');if(!el.value.trim())return;const a=ls.get('daily',[]);a.push({text:el.value.trim(),done:false});ls.set('daily',a);el.value='';renderDailyList()}
+function toggleDaily(i){const a=ls.get('daily',[]);a[i].done=!a[i].done;ls.set('daily',a);renderDailyList()}
+function removeDaily(i){const a=ls.get('daily',[]);a.splice(i,1);ls.set('daily',a);renderDailyList()}
+function resetDaily(){const a=ls.get('daily',[]).map(x=>({...x,done:false}));ls.set('daily',a);renderDailyList()}
+
+/* ─── EISENHOWER ─── */
+function renderEisenhower(){
+  return `<div class="t-row">
+    <input class="t-input" id="eisen-in" placeholder="Task description…">
+    <select class="t-select" id="eisen-q">
+      <option value="0">Urgent + Important (Do)</option>
+      <option value="1">Not Urgent + Important (Schedule)</option>
+      <option value="2">Urgent + Not Important (Delegate)</option>
+      <option value="3">Not Urgent + Not Important (Delete)</option>
+    </select>
+    <button class="btn btn-primary" onclick="addEisen()">Add</button>
+  </div>
+  <div class="eisen" id="eisen-board"></div>`;
+}
+function afterRenderEisenhower(){renderEisenBoard()}
+const EISEN_LABELS=['🔴 Do First','📘 Schedule','🟡 Delegate','⚫ Eliminate'];
+function renderEisenBoard(){
+  const board=document.getElementById('eisen-board');if(!board)return;
+  const items=ls.get('eisen',[[],[],[],[]]);
+  board.innerHTML=EISEN_LABELS.map((l,q)=>`<div class="eQ q${q+1}"><h4>${l}</h4>${items[q].map((it,i)=>`<div class="eItem">${escHtml(it)}<button onclick="removeEisen(${q},${i})">✕</button></div>`).join('')}</div>`).join('');
+}
+function addEisen(){
+  const el=document.getElementById('eisen-in');const q=parseInt(document.getElementById('eisen-q').value);
+  if(!el.value.trim())return;const a=ls.get('eisen',[[],[],[],[]]);a[q].push(el.value.trim());ls.set('eisen',a);el.value='';renderEisenBoard();
+}
+function removeEisen(q,i){const a=ls.get('eisen',[[],[],[],[]]);a[q].splice(i,1);ls.set('eisen',a);renderEisenBoard()}
+
+/* ─── KANBAN ─── */
+function renderKanban(){
+  return `<div class="t-row">
+    <input class="t-input" id="kb-in" placeholder="Task…">
+    <select class="t-select" id="kb-col"><option value="0">To Do</option><option value="1">Doing</option><option value="2">Done</option></select>
+    <button class="btn btn-primary" onclick="addKanban()">Add</button>
+  </div>
+  <div class="kanban" id="kb-board"></div>`;
+}
+function afterRenderKanban(){renderKanbanBoard()}
+const KB_COLS=['📋 To Do','⚡ Doing','✅ Done'];
+function renderKanbanBoard(){
+  const b=document.getElementById('kb-board');if(!b)return;
+  const d=ls.get('kanban',[[],[],[]]);
+  b.innerHTML=KB_COLS.map((l,c)=>`<div class="kCol"><h4>${l}</h4>${d[c].map((it,i)=>`<div class="kCard">${escHtml(it)}<button onclick="removeKanban(${c},${i})">✕</button></div>`).join('')}</div>`).join('');
+}
+function addKanban(){const el=document.getElementById('kb-in');const c=parseInt(document.getElementById('kb-col').value);if(!el.value.trim())return;const d=ls.get('kanban',[[],[],[]]);d[c].push(el.value.trim());ls.set('kanban',d);el.value='';renderKanbanBoard()}
+function removeKanban(c,i){const d=ls.get('kanban',[[],[],[]]);d[c].splice(i,1);ls.set('kanban',d);renderKanbanBoard()}
+
+/* ─── GOALS ─── */
+function renderGoals(){
+  const g=ls.get('goals',[]);
+  return `<div class="t-row">
+    <input class="t-input" id="goal-in" placeholder="Your goal…" onkeydown="if(event.key==='Enter')addGoal()">
+    <button class="btn btn-primary" onclick="addGoal()">Add</button>
+  </div>
+  <ul class="t-list" id="goal-list">${g.map((g,i)=>`<li><input type="checkbox" ${g.done?'checked':''} onchange="toggleGoal(${i})" style="accent-color:var(--accent);width:16px;height:16px"><span style="${g.done?'text-decoration:line-through;opacity:.4':''}">${escHtml(g.text)}</span><button onclick="removeGoal(${i})">✕</button></li>`).join('')}</ul>`;
+}
+function addGoal(){const el=document.getElementById('goal-in');if(!el.value.trim())return;const a=ls.get('goals',[]);a.push({text:el.value.trim(),done:false});ls.set('goals',a);el.value='';refreshGoals()}
+function toggleGoal(i){const a=ls.get('goals',[]);a[i].done=!a[i].done;ls.set('goals',a);refreshGoals()}
+function removeGoal(i){const a=ls.get('goals',[]);a.splice(i,1);ls.set('goals',a);refreshGoals()}
+function refreshGoals(){const el=document.getElementById('goal-list');if(el){const g=ls.get('goals',[]);el.innerHTML=g.map((g,i)=>`<li><input type="checkbox" ${g.done?'checked':''} onchange="toggleGoal(${i})" style="accent-color:var(--accent);width:16px;height:16px"><span style="${g.done?'text-decoration:line-through;opacity:.4':''}">${escHtml(g.text)}</span><button onclick="removeGoal(${i})">✕</button></li>`).join('')}}
+
+/* ─── WEEKLY REVIEW ─── */
+function renderWeekReview(){
+  const d=ls.get('weekreview',{wins:'',improve:'',next:''});
+  return `<div class="t-label">🏆 Wins this week</div>
+  <textarea class="t-textarea" id="wr-wins" placeholder="What went well?">${escHtml(d.wins)}</textarea>
+  <div class="t-label" style="margin-top:14px">📈 What to improve</div>
+  <textarea class="t-textarea" id="wr-imp" placeholder="Areas to grow…">${escHtml(d.improve)}</textarea>
+  <div class="t-label" style="margin-top:14px">🎯 Goals next week</div>
+  <textarea class="t-textarea" id="wr-next" placeholder="What to focus on…">${escHtml(d.next)}</textarea>
+  <button class="btn btn-primary" style="margin-top:14px" onclick="saveWeekReview()">Save Review</button>
+  <span id="wr-saved" style="font-size:.8rem;color:var(--green);margin-left:10px;opacity:0;transition:.3s">Saved!</span>`;
+}
+function saveWeekReview(){
+  ls.set('weekreview',{wins:document.getElementById('wr-wins').value,improve:document.getElementById('wr-imp').value,next:document.getElementById('wr-next').value});
+  const s=document.getElementById('wr-saved');s.style.opacity='1';setTimeout(()=>s.style.opacity='0',2000);
+}
+
+/* ─── BRAIN DUMP ─── */
+function renderBrainDump(){
+  return `<p style="color:var(--text3);font-size:.85rem;margin-bottom:12px">Just write. No formatting, no judgment. Get it all out.</p>
+  <textarea class="t-textarea" id="bd-area" style="min-height:260px" placeholder="Start typing… everything in your head…" oninput="autosaveBD()">${escHtml(ls.get('braindump',''))}</textarea>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
+    <span id="bd-saved" style="font-size:.78rem;color:var(--text3)"></span>
+    <button class="btn btn-danger" onclick="ls.set('braindump','');document.getElementById('bd-area').value='';document.getElementById('bd-saved').textContent='Cleared'">Clear</button>
+  </div>`;
+}
+let bdTimer;
+function autosaveBD(){
+  clearTimeout(bdTimer);
+  bdTimer=setTimeout(()=>{ls.set('braindump',document.getElementById('bd-area').value);const el=document.getElementById('bd-saved');if(el)el.textContent='Auto-saved ✓'},800);
+}
+
+/* ─── SESSION TRACKER ─── */
+function renderSession(){
+  const sessions=ls.get('sessions',[]);
+  return `<div class="t-row">
+    <input class="t-input" id="ses-in" placeholder="Session label (e.g. Deep Work)">
+    <button class="btn btn-primary" onclick="logSession()">Log Now</button>
+  </div>
+  <ul class="t-list" id="ses-list">${sessions.slice(-10).reverse().map(s=>`<li><span>${s.label}</span><span style="color:var(--text3);font-size:.78rem">${s.time}</span></li>`).join('')}</ul>
+  <button class="btn btn-danger" style="margin-top:12px" onclick="ls.set('sessions',[]);document.getElementById('ses-list').innerHTML=''">Clear Log</button>`;
+}
+function logSession(){
+  const el=document.getElementById('ses-in');if(!el.value.trim())return;
+  const a=ls.get('sessions',[]);
+  a.push({label:el.value.trim(),time:new Date().toLocaleString()});ls.set('sessions',a);el.value='';
+  const ul=document.getElementById('ses-list');
+  if(ul)ul.innerHTML=a.slice(-10).reverse().map(s=>`<li><span>${escHtml(s.label)}</span><span style="color:var(--text3);font-size:.78rem">${s.time}</span></li>`).join('');
+}
+
+/* ─── STOPWATCH ─── */
+let swInt=null,swMs=0,swLaps=[];
+function renderStopwatch(){
+  return `<div class="t-big" id="sw-display">00:00.0</div>
+  <div class="t-row" style="justify-content:center">
+    <button class="btn btn-primary" id="sw-btn" onclick="toggleSW()">▶ Start</button>
+    <button class="btn btn-ghost" onclick="lapSW()">Lap</button>
+    <button class="btn btn-ghost" onclick="resetSW()">↺ Reset</button>
+  </div>
+  <div id="sw-laps" style="margin-top:14px;display:flex;flex-direction:column;gap:4px"></div>`;
+}
+function toggleSW(){
+  if(swInt){clearInterval(swInt);swInt=null;document.getElementById('sw-btn').textContent='▶ Resume';return}
+  const start=Date.now()-swMs;
+  swInt=setInterval(()=>{swMs=Date.now()-start;const el=document.getElementById('sw-display');if(el)el.textContent=fmtMs(swMs)},100);
+  document.getElementById('sw-btn').textContent='⏸ Pause';
+}
+function lapSW(){swLaps.push(fmtMs(swMs));const el=document.getElementById('sw-laps');if(el)el.innerHTML=swLaps.map((l,i)=>`<div class="t-chip">Lap ${i+1}: ${l}</div>`).join('')}
+function resetSW(){stopStopwatch();swMs=0;swLaps=[];const d=document.getElementById('sw-display');if(d)d.textContent='00:00.0';const l=document.getElementById('sw-laps');if(l)l.innerHTML='';const b=document.getElementById('sw-btn');if(b)b.textContent='▶ Start';}
+function stopStopwatch(){clearInterval(swInt);swInt=null;}
+function fmtMs(ms){const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000),t=Math.floor((ms%1000)/100);return `${pad(m)}:${pad(s)}.${t}`}
+
+/* ─── COUNTDOWN ─── */
+let cdInt=null,cdSec=0;
+function renderCountdown(){
+  return `<div class="t-row" style="justify-content:center;flex-wrap:wrap;gap:8px">
+    <input class="t-input" id="cd-h" type="number" min="0" max="23" value="0" style="width:72px;text-align:center" placeholder="h">
+    <input class="t-input" id="cd-m" type="number" min="0" max="59" value="5" style="width:72px;text-align:center" placeholder="m">
+    <input class="t-input" id="cd-s" type="number" min="0" max="59" value="0" style="width:72px;text-align:center" placeholder="s">
+    <button class="btn btn-primary" onclick="startCountdown()">▶ Start</button>
+    <button class="btn btn-ghost" onclick="stopCountdown();cdSec=0;updateCDDisplay()">↺ Reset</button>
+  </div>
+  <div class="t-big" id="cd-display">00:05:00</div>
+  <progress id="cd-progress" value="0" max="100" style="margin-top:8px"></progress>`;
+}
+let cdTotal=0;
+function startCountdown(){
+  stopCountdown();
+  const h=parseInt(document.getElementById('cd-h').value)||0;
+  const m=parseInt(document.getElementById('cd-m').value)||0;
+  const s=parseInt(document.getElementById('cd-s').value)||0;
+  cdSec=h*3600+m*60+s;cdTotal=cdSec;
+  updateCDDisplay();
+  cdInt=setInterval(()=>{
+    cdSec--;updateCDDisplay();
+    const p=document.getElementById('cd-progress');if(p)p.value=((cdTotal-cdSec)/cdTotal)*100;
+    if(cdSec<=0){stopCountdown();alert('⏰ Time\'s up!');}
+  },1000);
+}
+function stopCountdown(){clearInterval(cdInt);cdInt=null;}
+function updateCDDisplay(){const el=document.getElementById('cd-display');if(el)el.textContent=`${pad(Math.floor(cdSec/3600))}:${pad(Math.floor((cdSec%3600)/60))}:${pad(cdSec%60)}`}
+
+/* ─── BREAK REMINDER ─── */
+let breakInt=null;
+function renderBreak(){
+  return `<div style="text-align:center;padding:10px 0">
+    <p style="color:var(--text2);margin-bottom:20px">Get a browser alert every N minutes to take a break.</p>
+    <div class="t-row" style="justify-content:center">
+      <input class="t-input" id="brk-min" type="number" value="60" min="1" style="width:100px;text-align:center">
+      <span style="color:var(--text2)">minutes</span>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-primary" onclick="startBreak()">Start Reminders</button>
+      <button class="btn btn-danger" onclick="stopBreak()">Stop</button>
+    </div>
+    <div id="brk-status" style="margin-top:14px;color:var(--text3);font-size:.85rem"></div>
+  </div>`;
+}
+function startBreak(){
+  stopBreak();
+  const m=(parseInt(document.getElementById('brk-min').value)||60)*60000;
+  breakInt=setInterval(()=>alert('☕ Time for a break! Step away for a few minutes.'),m);
+  document.getElementById('brk-status').textContent=`✅ Reminders set every ${parseInt(document.getElementById('brk-min').value)} min`;
+}
+function stopBreak(){clearInterval(breakInt);breakInt=null;}
+
+/* ─── TIMEZONE ─── */
+function renderTimezone(){
+  const zones=['America/New_York','America/Los_Angeles','America/Chicago','Europe/London','Europe/Paris','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','America/Sao_Paulo'];
+  function row(z){const t=new Date().toLocaleTimeString('en-US',{timeZone:z,hour:'2-digit',minute:'2-digit',second:'2-digit'});return `<li><span>${z.split('/')[1]||z}</span><span style="font-family:var(--font-head);font-weight:700;color:var(--accent)">${t}</span></li>`}
+  return `<ul class="t-list" id="tz-list">${zones.map(row).join('')}</ul>`;
+}
+function afterRenderTimezone(){setInterval(()=>{const el=document.getElementById('tz-list');if(el){const zones=['America/New_York','America/Los_Angeles','America/Chicago','Europe/London','Europe/Paris','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','America/Sao_Paulo'];el.innerHTML=zones.map(z=>{const t=new Date().toLocaleTimeString('en-US',{timeZone:z,hour:'2-digit',minute:'2-digit',second:'2-digit'});return `<li><span>${z.split('/')[1]||z}</span><span style="font-family:var(--font-head);font-weight:700;color:var(--accent)">${t}</span></li>`}).join('')}},1000)}
+
+/* ─── NOTES ─── */
+function renderNotes(){
+  return `<textarea class="t-textarea" id="notes-area" style="min-height:300px" placeholder="Start writing…" oninput="autosaveNotes()">${escHtml(ls.get('notes',''))}</textarea>
+  <div style="display:flex;justify-content:space-between;margin-top:8px">
+    <span id="notes-saved" style="font-size:.78rem;color:var(--text3)"></span>
+    <button class="btn btn-danger" onclick="ls.set('notes','');document.getElementById('notes-area').value=''">Clear</button>
+  </div>`;
+}
+let notesTimer;
+function autosaveNotes(){clearTimeout(notesTimer);notesTimer=setTimeout(()=>{ls.set('notes',document.getElementById('notes-area').value);const el=document.getElementById('notes-saved');if(el)el.textContent='Auto-saved ✓'},600)}
+
+/* ─── WORD COUNT ─── */
+function renderWordCount(){
+  return `<textarea class="t-textarea" id="wc-area" style="min-height:160px" placeholder="Paste or type your text here…" oninput="updateWC()"></textarea>
+  <div class="t-grid3" style="margin-top:12px">
+    <div class="t-stat"><div class="val" id="wc-words">0</div><div class="lbl">Words</div></div>
+    <div class="t-stat"><div class="val" id="wc-chars">0</div><div class="lbl">Chars</div></div>
+    <div class="t-stat"><div class="val" id="wc-lines">0</div><div class="lbl">Lines</div></div>
+  </div>`;
+}
+function updateWC(){
+  const t=document.getElementById('wc-area').value;
+  document.getElementById('wc-words').textContent=t.trim()?t.trim().split(/\s+/).length:0;
+  document.getElementById('wc-chars').textContent=t.length;
+  document.getElementById('wc-lines').textContent=t.split('\n').length;
+}
+
+/* ─── TEXT FORMATTER ─── */
+function renderFormatter(){
+  return `<textarea class="t-textarea" id="fmt-in" placeholder="Enter text to format…" style="min-height:100px"></textarea>
+  <div class="t-row" style="margin-top:10px;flex-wrap:wrap">
+    <button class="btn btn-ghost" onclick="fmtApply('upper')">UPPERCASE</button>
+    <button class="btn btn-ghost" onclick="fmtApply('lower')">lowercase</button>
+    <button class="btn btn-ghost" onclick="fmtApply('title')">Title Case</button>
+    <button class="btn btn-ghost" onclick="fmtApply('sentence')">Sentence case</button>
+    <button class="btn btn-ghost" onclick="fmtApply('trim')">Trim Spaces</button>
+    <button class="btn btn-ghost" onclick="fmtApply('reverse')">Reverse</button>
+    <button class="btn btn-ghost" onclick="fmtApply('slug')">slug-case</button>
+  </div>
+  <div class="t-out" id="fmt-out" style="margin-top:12px;white-space:pre-wrap"></div>
+  <button class="btn btn-primary" style="margin-top:8px" onclick="copyEl('fmt-out')">Copy</button>`;
+}
+function fmtApply(type){
+  const v=document.getElementById('fmt-in').value,el=document.getElementById('fmt-out');
+  const ops={upper:s=>s.toUpperCase(),lower:s=>s.toLowerCase(),title:s=>s.replace(/\w\S*/g,t=>t[0].toUpperCase()+t.slice(1).toLowerCase()),sentence:s=>s.charAt(0).toUpperCase()+s.slice(1).toLowerCase(),trim:s=>s.replace(/\s+/g,' ').trim(),reverse:s=>s.split('').reverse().join(''),slug:s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')};
+  if(el)el.textContent=ops[type]?ops[type](v):v;
+}
+
+/* ─── MARKDOWN PREVIEW ─── */
+function renderMarkdown(){
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div><div class="t-label">Markdown</div><textarea class="t-textarea" id="md-in" style="min-height:240px" oninput="updateMD()" placeholder="# Hello\n**Bold**, *italic*, \`code\`\n- List item"></textarea></div>
+    <div><div class="t-label">Preview</div><div id="md-out" style="min-height:240px;padding:14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);font-size:.88rem;line-height:1.7;overflow:auto"></div></div>
+  </div>`;
+}
+function updateMD(){
+  const v=document.getElementById('md-in').value;
+  const el=document.getElementById('md-out');if(!el)return;
+  let h=v
+    .replace(/^### (.*)/gm,'<h3>$1</h3>').replace(/^## (.*)/gm,'<h2>$1</h2>').replace(/^# (.*)/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`(.*?)`/g,'<code style="background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px">$1</code>')
+    .replace(/^- (.*)/gm,'<li>$1</li>').replace(/\n/g,'<br>');
+  el.innerHTML=h;
+}
+
+/* ─── TTS ─── */
+function renderTTS(){
+  return `<textarea class="t-textarea" id="tts-in" placeholder="Type text to speak…" style="min-height:120px"></textarea>
+  <div class="t-row" style="margin-top:12px">
+    <button class="btn btn-primary" onclick="speakTTS()">🔊 Speak</button>
+    <button class="btn btn-ghost" onclick="window.speechSynthesis.cancel()">⏹ Stop</button>
+  </div>
+  <div class="t-row" style="margin-top:10px">
+    <label style="font-size:.8rem;color:var(--text2)">Rate</label>
+    <input type="range" id="tts-rate" min="0.5" max="2" step="0.1" value="1" style="accent-color:var(--accent);flex:1">
+    <label style="font-size:.8rem;color:var(--text2)">Pitch</label>
+    <input type="range" id="tts-pitch" min="0" max="2" step="0.1" value="1" style="accent-color:var(--accent);flex:1">
+  </div>`;
+}
+function speakTTS(){
+  const u=new SpeechSynthesisUtterance(document.getElementById('tts-in').value);
+  u.rate=parseFloat(document.getElementById('tts-rate').value);
+  u.pitch=parseFloat(document.getElementById('tts-pitch').value);
+  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);
+}
+
+/* ─── STT ─── */
+function renderSTT(){
+  return `<div style="text-align:center;padding:10px 0">
+    <p style="color:var(--text2);font-size:.88rem;margin-bottom:16px">Click the mic and speak. Text appears below.</p>
+    <button class="btn btn-primary" id="stt-btn" onclick="toggleSTT()">🎤 Start Recording</button>
+  </div>
+  <div class="t-out" id="stt-out" style="min-height:120px;margin-top:14px;white-space:pre-wrap">Your speech will appear here…</div>
+  <button class="btn btn-ghost" style="margin-top:8px" onclick="copyEl('stt-out')">Copy</button>`;
+}
+let sttRec=null;
+function toggleSTT(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Speech Recognition not supported in this browser.');return}
+  if(sttRec){sttRec.stop();sttRec=null;document.getElementById('stt-btn').textContent='🎤 Start Recording';return}
+  sttRec=new SR();sttRec.continuous=true;sttRec.interimResults=true;
+  sttRec.onresult=e=>{const el=document.getElementById('stt-out');if(el)el.textContent=Array.from(e.results).map(r=>r[0].transcript).join('')};
+  sttRec.start();document.getElementById('stt-btn').textContent='⏹ Stop Recording';
+}
+
+/* ─── TYPEWRITER ─── */
+function renderTypewriter(){
+  return `<div style="margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+    <span style="font-size:.78rem;color:var(--text3)" id="tw-saved"></span>
+    <button class="btn btn-danger" onclick="ls.set('typewriter','');document.getElementById('tw-area').innerHTML='';document.getElementById('tw-saved').textContent='Cleared'">Clear</button>
+  </div>
+  <div id="tw-area" contenteditable="true" spellcheck="true" oninput="autosaveTW()">${ls.get('typewriter','')}</div>`;
+}
+let twTimer;
+function autosaveTW(){clearTimeout(twTimer);twTimer=setTimeout(()=>{ls.set('typewriter',document.getElementById('tw-area').innerHTML);const el=document.getElementById('tw-saved');if(el)el.textContent='Saved ✓'},800)}
+
+/* ─── FLASHCARDS ─── */
+function renderFlashcards(){
+  const cards=ls.get('flashcards',[]);
+  return `<div class="t-row">
+    <input class="t-input" id="fc-q" placeholder="Question / Front">
+    <input class="t-input" id="fc-a" placeholder="Answer / Back">
+    <button class="btn btn-primary" onclick="addFC()">Add</button>
+  </div>
+  <div id="fc-deck"></div>
+  <div style="display:flex;gap:8px;margin-top:12px">
+    <button class="btn btn-ghost" onclick="prevFC()">◀ Prev</button>
+    <button class="btn btn-ghost" onclick="nextFC()">Next ▶</button>
+    <button class="btn btn-ghost" onclick="flipFC()">↩ Flip</button>
+  </div>
+  <div style="margin-top:8px;font-size:.8rem;color:var(--text3)" id="fc-info"></div>`;
+}
+function afterRenderFlashcards(){renderFCDeck()}
+let fcIdx=0;
+function renderFCDeck(){
+  const c=ls.get('flashcards',[]);const el=document.getElementById('fc-deck');if(!el)return;
+  if(!c.length){el.innerHTML='<p style="color:var(--text3);padding:20px;text-align:center">Add cards above to get started.</p>';return}
+  if(fcIdx>=c.length)fcIdx=0;
+  el.innerHTML=`<div class="fc-card" id="fc-card" onclick="flipFC()"><div class="fc-inner"><div class="fc-face fc-front">${escHtml(c[fcIdx].q)}</div><div class="fc-face fc-back">${escHtml(c[fcIdx].a)}</div></div></div>`;
+  document.getElementById('fc-info').textContent=`Card ${fcIdx+1} of ${c.length} — Click to flip`;
+}
+function addFC(){const q=document.getElementById('fc-q'),a=document.getElementById('fc-a');if(!q.value.trim()||!a.value.trim())return;const c=ls.get('flashcards',[]);c.push({q:q.value.trim(),a:a.value.trim()});ls.set('flashcards',c);q.value='';a.value='';renderFCDeck()}
+function flipFC(){const c=document.getElementById('fc-card');if(c)c.classList.toggle('flipped')}
+function nextFC(){fcIdx=(fcIdx+1)%ls.get('flashcards',[]).length;renderFCDeck()}
+function prevFC(){const c=ls.get('flashcards',[]);fcIdx=(fcIdx-1+c.length)%c.length;renderFCDeck()}
+
+/* ─── JSON FORMATTER ─── */
+function renderJSON(){
+  return `<textarea class="t-textarea" id="json-in" style="min-height:140px" placeholder='{"key":"value","array":[1,2,3]}'></textarea>
+  <div class="t-row" style="margin-top:10px">
+    <button class="btn btn-primary" onclick="fmtJSON('pretty')">Beautify</button>
+    <button class="btn btn-ghost" onclick="fmtJSON('mini')">Minify</button>
+    <button class="btn btn-ghost" onclick="copyEl('json-out')">Copy</button>
+  </div>
+  <pre class="t-out" id="json-out" style="white-space:pre-wrap;font-size:.82rem;max-height:220px;overflow:auto"></pre>`;
+}
+function fmtJSON(mode){
+  try{const p=JSON.parse(document.getElementById('json-in').value);document.getElementById('json-out').textContent=mode==='pretty'?JSON.stringify(p,null,2):JSON.stringify(p);}
+  catch(e){document.getElementById('json-out').textContent='❌ Invalid JSON: '+e.message;}
+}
+
+/* ─── AFFIRMATIONS ─── */
+const AFFIRM=['I am capable of achieving great things.','I choose to be kind to myself today.','I am growing stronger every day.','My potential is limitless.','I attract positivity and success.','I am enough exactly as I am.','Every challenge makes me stronger.','I deserve happiness and peace.','I am confident in my abilities.','Today I create the life I want.'];
+function renderAffirmations(){
+  return `<div style="text-align:center;padding:10px 0">
+    <div class="t-out" id="aff-out" style="font-size:1.1rem;text-align:center;padding:24px;min-height:80px;line-height:1.7">${AFFIRM[0]}</div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="nextAffirm()">✨ New Affirmation</button>
+    <button class="btn btn-ghost" style="margin-top:8px" onclick="speakAffirm()">🔊 Speak It</button>
+  </div>`;
+}
+let affIdx=0;
+function nextAffirm(){affIdx=(affIdx+1)%AFFIRM.length;const el=document.getElementById('aff-out');if(el)el.textContent=AFFIRM[affIdx]}
+function speakAffirm(){const u=new SpeechSynthesisUtterance(AFFIRM[affIdx]);window.speechSynthesis.speak(u)}
+
+/* ─── QUOTES ─── */
+const QUOTES=[{q:'Do what you can, with what you have, where you are.',a:'Theodore Roosevelt'},{q:'The secret of getting ahead is getting started.',a:'Mark Twain'},{q:'It does not matter how slowly you go as long as you do not stop.',a:'Confucius'},{q:'You are never too old to set another goal or to dream a new dream.',a:'C.S. Lewis'},{q:'Believe you can and you\'re halfway there.',a:'Theodore Roosevelt'},{q:'Start where you are. Use what you have. Do what you can.',a:'Arthur Ashe'},{q:'Success is not final; failure is not fatal.',a:'Winston Churchill'},{q:'In the middle of every difficulty lies opportunity.',a:'Albert Einstein'}];
+function renderQuotes(){const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];return `<div style="text-align:center;padding:20px 0"><div class="t-out" id="qt-out" style="font-size:1.05rem;font-style:italic;padding:24px;min-height:80px;line-height:1.8">"${q.q}"<br><span style="font-size:.85rem;color:var(--text3);font-style:normal">— ${q.a}</span></div><button class="btn btn-primary" style="margin-top:16px" onclick="newQuote()">✨ New Quote</button></div>`}
+function newQuote(){const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];const el=document.getElementById('qt-out');if(el)el.innerHTML=`"${q.q}"<br><span style="font-size:.85rem;color:var(--text3);font-style:normal">— ${q.a}</span>`}
+
+/* ─── CALCULATOR ─── */
+function renderCalc(){
+  return `<div id="calc-display" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;font-family:var(--font-head);font-size:1.6rem;text-align:right;min-height:54px;margin-bottom:10px;word-break:break-all">0</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+    ${['C','±','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','^','='].map(b=>`<button class="btn ${b==='='?'btn-primary':/[÷×−+^%]/.test(b)?'btn-ghost':'btn-ghost'}" style="padding:13px;font-size:${b==='='?'1.1rem':'.95rem'};font-weight:700" onclick="calcInput('${b}')">${b}</button>`).join('')}
+  </div>`;
+}
+let calcVal='0',calcOp='',calcPrev='';
+function calcInput(v){
+  const d=document.getElementById('calc-display');
+  if(v==='C'){calcVal='0';calcOp='';calcPrev='';d.textContent='0';return}
+  if(v==='±'){calcVal=String(-parseFloat(calcVal));d.textContent=calcVal;return}
+  if(v==='%'){calcVal=String(parseFloat(calcVal)/100);d.textContent=calcVal;return}
+  if(['+','−','×','÷','^'].includes(v)){calcPrev=calcVal;calcOp=v;calcVal='0';return}
+  if(v==='='){
+    const a=parseFloat(calcPrev),b=parseFloat(calcVal);
+    const ops={'+':a+b,'−':a-b,'×':a*b,'÷':b?a/b:NaN,'^':Math.pow(a,b)};
+    calcVal=String(calcOp&&calcOp in ops?ops[calcOp]:b);d.textContent=calcVal;calcOp='';return;
+  }
+  if(v==='.'&&calcVal.includes('.'))return;
+  calcVal=(calcVal==='0'&&v!=='.')?v:calcVal+v;d.textContent=calcVal;
+}
+
+/* ─── PASSWORD GENERATOR ─── */
+function renderPassword(){
+  return `<div class="t-row">
+    <label style="color:var(--text2);font-size:.85rem">Length:</label>
+    <input type="range" id="pw-len" min="8" max="64" value="16" oninput="updatePWLen()" style="accent-color:var(--accent);flex:1">
+    <span id="pw-len-val" style="font-family:var(--font-head);font-weight:700;color:var(--accent)">16</span>
+  </div>
+  <div class="t-row" style="flex-wrap:wrap;gap:10px">
+    <label><input type="checkbox" id="pw-upper" checked style="accent-color:var(--accent)"> A-Z</label>
+    <label><input type="checkbox" id="pw-lower" checked style="accent-color:var(--accent)"> a-z</label>
+    <label><input type="checkbox" id="pw-num" checked style="accent-color:var(--accent)"> 0-9</label>
+    <label><input type="checkbox" id="pw-sym" checked style="accent-color:var(--accent)"> !@#$</label>
+  </div>
+  <div class="t-out" id="pw-out" style="font-family:monospace;font-size:1rem;letter-spacing:.05em;padding:16px;word-break:break-all"></div>
+  <div class="t-row" style="margin-top:10px">
+    <button class="btn btn-primary" onclick="genPW()">Generate</button>
+    <button class="btn btn-ghost" onclick="copyEl('pw-out')">Copy</button>
+  </div>`;
+}
+function updatePWLen(){document.getElementById('pw-len-val').textContent=document.getElementById('pw-len').value}
+function genPW(){
+  let chars='';
+  if(document.getElementById('pw-upper').checked)chars+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  if(document.getElementById('pw-lower').checked)chars+='abcdefghijklmnopqrstuvwxyz';
+  if(document.getElementById('pw-num').checked)chars+='0123456789';
+  if(document.getElementById('pw-sym').checked)chars+='!@#$%^&*()-_=+[]{}|;:,.<>?';
+  if(!chars){alert('Select at least one character type');return}
+  const len=parseInt(document.getElementById('pw-len').value);
+  let pw='';const arr=new Uint32Array(len);crypto.getRandomValues(arr);
+  arr.forEach(n=>pw+=chars[n%chars.length]);
+  document.getElementById('pw-out').textContent=pw;
+}
+
+/* ─── UNIT CONVERTER ─── */
+const UNITS={Length:{m:1,km:0.001,cm:100,mm:1000,mi:0.000621371,yd:1.09361,ft:3.28084,in:39.3701},Weight:{kg:1,g:1000,lb:2.20462,oz:35.274,t:0.001},Temperature:{special:true},Speed:{mps:1,'km/h':3.6,mph:2.23694,knot:1.94384}};
+function renderConverter(){
+  return `<div class="t-row">
+    <select class="t-select" id="uc-cat" onchange="updateUCUnits()">${Object.keys(UNITS).map(k=>`<option>${k}</option>`).join('')}</select>
+  </div>
+  <div class="t-row">
+    <input class="t-input" id="uc-val" type="number" value="1" oninput="convertUnit()">
+    <select class="t-select" id="uc-from" onchange="convertUnit()"></select>
+    <span style="color:var(--text2)">→</span>
+    <select class="t-select" id="uc-to" onchange="convertUnit()"></select>
+  </div>
+  <div class="t-out" id="uc-out" style="font-size:1.2rem;font-weight:700;text-align:center;padding:18px;color:var(--accent)"></div>`;
+}
+function afterRenderConverter(){updateUCUnits()}
+function updateUCUnits(){
+  const cat=document.getElementById('uc-cat').value;const u=UNITS[cat];
+  const keys=cat==='Temperature'?['Celsius','Fahrenheit','Kelvin']:Object.keys(u);
+  ['uc-from','uc-to'].forEach((id,i)=>{const el=document.getElementById(id);if(el){el.innerHTML=keys.map((k,j)=>`<option ${j===i?'selected':''}>${k}</option>`).join('')}});
+  convertUnit();
+}
+function convertUnit(){
+  const cat=document.getElementById('uc-cat').value;const v=parseFloat(document.getElementById('uc-val').value);
+  const from=document.getElementById('uc-from').value;const to=document.getElementById('uc-to').value;
+  let result;
+  if(cat==='Temperature'){
+    let c=from==='Celsius'?v:from==='Fahrenheit'?(v-32)*5/9:v-273.15;
+    result=to==='Celsius'?c:to==='Fahrenheit'?c*9/5+32:c+273.15;
+  }else{const u=UNITS[cat];result=(v/u[from])*u[to]}
+  const el=document.getElementById('uc-out');if(el)el.textContent=`${v} ${from} = ${result.toFixed(6).replace(/\.?0+$/,'')} ${to}`;
+}
+
+/* ─── QR CODE ─── */
+function renderQR(){
+  return `<div class="t-row">
+    <input class="t-input" id="qr-in" placeholder="Enter URL or text…" value="https://example.com">
+    <button class="btn btn-primary" onclick="genQR()">Generate</button>
+  </div>
+  <div id="qr-out" style="margin-top:16px;text-align:center"></div>`;
+}
+function genQR(){
+  const v=document.getElementById('qr-in').value.trim();if(!v)return;
+  const url=`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(v)}&bgcolor=0d1120&color=5b8def&format=png`;
+  document.getElementById('qr-out').innerHTML=`<img src="${url}" style="border-radius:12px;border:1px solid var(--border)" alt="QR Code"><br><a href="${url}" download="qr.png" class="btn btn-ghost" style="margin-top:10px;display:inline-flex">⬇ Download</a>`;
+}
+
+/* ─── COLOR PICKER ─── */
+function renderColor(){
+  return `<div style="text-align:center">
+    <input type="color" id="cp-pick" value="#5b8def" oninput="updateColor()" style="width:100px;height:100px;border:none;background:none;cursor:pointer;border-radius:50%">
+  </div>
+  <div class="t-grid2" style="margin-top:16px">
+    <div class="t-stat"><div class="val" id="cp-hex" style="font-size:1rem">#5b8def</div><div class="lbl">HEX</div></div>
+    <div class="t-stat"><div class="val" id="cp-rgb" style="font-size:.85rem">91,141,239</div><div class="lbl">RGB</div></div>
+  </div>
+  <div id="cp-preview" style="height:80px;border-radius:var(--r2);background:#5b8def;margin-top:14px;border:1px solid var(--border);transition:.2s"></div>
+  <div class="t-row" style="margin-top:10px">
+    <button class="btn btn-ghost" onclick="copyText(document.getElementById('cp-hex').textContent)">Copy HEX</button>
+    <button class="btn btn-ghost" onclick="copyText('rgb('+document.getElementById('cp-rgb').textContent+')')">Copy RGB</button>
+  </div>`;
+}
+function updateColor(){
+  const v=document.getElementById('cp-pick').value;
+  document.getElementById('cp-hex').textContent=v;
+  const r=parseInt(v.slice(1,3),16),g=parseInt(v.slice(3,5),16),b=parseInt(v.slice(5,7),16);
+  document.getElementById('cp-rgb').textContent=`${r},${g},${b}`;
+  document.getElementById('cp-preview').style.background=v;
+}
+
+/* ─── GRADIENT GEN ─── */
+function renderGradient(){
+  return `<div class="t-row">
+    <select class="t-select" id="gr-type" onchange="updateGrad()"><option>linear</option><option>radial</option></select>
+    <input type="range" id="gr-angle" min="0" max="360" value="135" oninput="updateGrad()" style="accent-color:var(--accent);flex:1">
+    <span id="gr-ang-val" style="color:var(--accent);font-weight:700;font-family:var(--font-head)">135°</span>
+  </div>
+  <div class="grad-stops">
+    <input type="color" id="gr-c1" value="#5b8def" oninput="updateGrad()" class="grad-stop">
+    <input type="color" id="gr-c2" value="#7c5ce4" oninput="updateGrad()" class="grad-stop">
+    <input type="color" id="gr-c3" value="#00d4aa" oninput="updateGrad()" class="grad-stop">
+  </div>
+  <div id="gr-preview" class="grad-preview"></div>
+  <div class="t-out" id="gr-css" style="font-family:monospace;font-size:.82rem"></div>
+  <button class="btn btn-ghost" style="margin-top:8px" onclick="copyEl('gr-css')">Copy CSS</button>`;
+}
+function afterRenderGradient(){updateGrad()}
+function updateGrad(){
+  const type=document.getElementById('gr-type').value;
+  const angle=document.getElementById('gr-angle').value;
+  const c1=document.getElementById('gr-c1').value;
+  const c2=document.getElementById('gr-c2').value;
+  const c3=document.getElementById('gr-c3').value;
+  document.getElementById('gr-ang-val').textContent=angle+'°';
+  const css=type==='linear'?`linear-gradient(${angle}deg, ${c1}, ${c2}, ${c3})`:`radial-gradient(circle, ${c1}, ${c2}, ${c3})`;
+  document.getElementById('gr-preview').style.background=css;
+  document.getElementById('gr-css').textContent=`background: ${css};`;
+}
+
+/* ─── RANDOM NUMBER ─── */
+function renderRandom(){
+  return `<div class="t-row" style="justify-content:center">
+    <input class="t-input" id="rn-min" type="number" value="1" style="width:100px;text-align:center" placeholder="Min">
+    <span style="color:var(--text2)">to</span>
+    <input class="t-input" id="rn-max" type="number" value="100" style="width:100px;text-align:center" placeholder="Max">
+    <input class="t-input" id="rn-count" type="number" value="1" min="1" max="20" style="width:80px;text-align:center" placeholder="Count">
+  </div>
+  <div class="t-big" id="rn-out" style="min-height:60px">?</div>
+  <div class="t-row" style="justify-content:center">
+    <button class="btn btn-primary" onclick="genRandom()">🎲 Generate</button>
+    <button class="btn btn-ghost" onclick="copyEl('rn-out')">Copy</button>
+  </div>`;
+}
+function genRandom(){
+  const min=parseInt(document.getElementById('rn-min').value);
+  const max=parseInt(document.getElementById('rn-max').value);
+  const count=parseInt(document.getElementById('rn-count').value)||1;
+  const nums=Array.from({length:count},()=>Math.floor(Math.random()*(max-min+1))+min);
+  document.getElementById('rn-out').textContent=nums.join(', ');
+}
+
+/* ─── DECISION MAKER ─── */
+function renderDecision(){
+  return `<div class="t-row">
+    <input class="t-input" id="dec-in" placeholder="Option (press Enter to add)…" onkeydown="if(event.key==='Enter')addDecOpt()">
+    <button class="btn btn-primary" onclick="addDecOpt()">Add</button>
+  </div>
+  <div id="dec-opts" style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0"></div>
+  <div style="text-align:center">
+    <canvas id="spin-canvas" width="240" height="240"></canvas>
+    <br>
+    <button class="btn btn-primary" style="margin-top:10px" onclick="spinWheel()">🎡 Spin!</button>
+  </div>
+  <div class="t-out" id="dec-result" style="text-align:center;font-size:1.1rem;margin-top:10px"></div>`;
+}
+function afterRenderDecision(){renderDecOpts();drawWheel(0)}
+let decOpts=[];
+function addDecOpt(){const el=document.getElementById('dec-in');if(!el.value.trim())return;decOpts.push(el.value.trim());el.value='';renderDecOpts();drawWheel(0)}
+function renderDecOpts(){const el=document.getElementById('dec-opts');if(!el)return;el.innerHTML=decOpts.map((o,i)=>`<div class="t-chip">${escHtml(o)}<button onclick="decOpts.splice(${i},1);renderDecOpts();drawWheel(0)" style="background:none;color:var(--text3);margin-left:6px;cursor:pointer">✕</button></div>`).join('')}
+const WHEEL_COLORS=['#5b8def','#7c5ce4','#00d4aa','#ef4f6a','#f6c90e','#ff7744','#a29bfe','#fd79a8'];
+function drawWheel(angle){
+  const c=document.getElementById('spin-canvas');if(!c)return;
+  const ctx=c.getContext('2d'),cx=120,cy=120,r=110,items=decOpts.length?decOpts:['Option 1','Option 2','Option 3','Option 4'];
+  ctx.clearRect(0,0,240,240);
+  items.forEach((item,i)=>{
+    const start=angle+i*(2*Math.PI/items.length),end=start+(2*Math.PI/items.length);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,end);ctx.closePath();
+    ctx.fillStyle=WHEEL_COLORS[i%WHEEL_COLORS.length];ctx.fill();
+    ctx.save();ctx.translate(cx,cy);ctx.rotate(start+(end-start)/2);
+    ctx.fillStyle='#fff';ctx.font='bold 11px Syne,sans-serif';ctx.textAlign='right';
+    ctx.fillText(item.length>10?item.slice(0,10)+'…':item,r-8,4);ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(cx,cy,12,0,2*Math.PI);ctx.fillStyle='#090c14';ctx.fill();
+}
+function spinWheel(){
+  if(!decOpts.length){alert('Add options first!');return}
+  let spin=Math.random()*10+5;let angle=0;let frame=0;
+  const total=150+Math.floor(Math.random()*150);
+  function step(){frame++;angle+=spin*(1-frame/total);drawWheel(angle);
+    if(frame<total)requestAnimationFrame(step);
+    else{const idx=Math.floor(((2*Math.PI-(angle%(2*Math.PI)))/(2*Math.PI/decOpts.length)))%decOpts.length;
+      document.getElementById('dec-result').textContent='🎉 Result: '+decOpts[idx];}
+  }requestAnimationFrame(step);
+}
+
+/* ─── FILENAME CLEANER ─── */
+function renderFilename(){
+  return `<textarea class="t-textarea" id="fn-in" placeholder="Enter filenames (one per line)…&#10;My Document (2).docx&#10;image file name here.jpg"></textarea>
+  <button class="btn btn-primary" style="margin-top:10px" onclick="cleanFilenames()">Clean</button>
+  <div class="t-out" id="fn-out" style="white-space:pre;font-family:monospace;margin-top:10px"></div>`;
+}
+function cleanFilenames(){
+  const lines=document.getElementById('fn-in').value.split('\n').filter(l=>l.trim());
+  const cleaned=lines.map(l=>l.trim().replace(/\s+/g,'_').replace(/[^\w\-_.]/g,'').replace(/__+/g,'_').toLowerCase());
+  document.getElementById('fn-out').textContent=cleaned.join('\n');
+}
+
+/* ─── IDEA GENERATOR ─── */
+const IDEAS=['Build a habit-tracking browser extension','Write a blog post about your biggest lesson this year','Create a 5-step template for your next project','Design a personal productivity system','Write 3 short essays on topics you care about','Build a personal knowledge base','Create a weekly review ritual','Start a micro-newsletter for a niche interest','Design a better morning routine','Map out your 5-year vision on one page'];
+function renderIdea(){
+  return `<div style="text-align:center;padding:10px 0">
+    <div class="t-out" id="idea-out" style="font-size:1.05rem;padding:24px;text-align:center;min-height:80px;line-height:1.7">${IDEAS[0]}</div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="newIdea()">💡 New Idea</button>
+  </div>`;
+}
+function newIdea(){const el=document.getElementById('idea-out');if(el)el.textContent=IDEAS[Math.floor(Math.random()*IDEAS.length)]}
+
+/* ─── URL OPENER ─── */
+function renderURLList(){
+  return `<p style="color:var(--text3);font-size:.85rem;margin-bottom:10px">Paste URLs (one per line) and open all at once.</p>
+  <textarea class="t-textarea" id="url-in" style="min-height:140px" placeholder="https://example.com&#10;https://google.com&#10;https://github.com"></textarea>
+  <button class="btn btn-primary" style="margin-top:10px" onclick="openURLs()">🔗 Open All</button>`;
+}
+function openURLs(){
+  const urls=document.getElementById('url-in').value.split('\n').map(u=>u.trim()).filter(u=>u.startsWith('http'));
+  if(!urls.length)return alert('No valid URLs found');
+  urls.forEach(u=>window.open(u,'_blank'));
+}
+
+/* ─── BOOKMARKS ─── */
+function renderBookmarks(){
+  return `<div class="t-row">
+    <input class="t-input" id="bm-name" placeholder="Name">
+    <input class="t-input" id="bm-url" placeholder="https://…">
+    <button class="btn btn-primary" onclick="addBM()">Save</button>
+  </div>
+  <ul class="t-list" id="bm-list"></ul>`;
+}
+function afterRenderBookmarks(){renderBMList()}
+function renderBMList(){
+  const ul=document.getElementById('bm-list');if(!ul)return;
+  const bms=ls.get('bookmarks',[]);
+  ul.innerHTML=bms.map((b,i)=>`<li><a href="${escHtml(b.url)}" target="_blank" style="color:var(--accent)">${escHtml(b.name)}</a><span style="font-size:.75rem;color:var(--text3);flex:1;margin-left:8px">${escHtml(b.url)}</span><button onclick="removeBM(${i})">✕</button></li>`).join('');
+}
+function addBM(){const n=document.getElementById('bm-name').value.trim();const u=document.getElementById('bm-url').value.trim();if(!n||!u)return;const a=ls.get('bookmarks',[]);a.push({name:n,url:u});ls.set('bookmarks',a);document.getElementById('bm-name').value='';document.getElementById('bm-url').value='';renderBMList()}
+function removeBM(i){const a=ls.get('bookmarks',[]);a.splice(i,1);ls.set('bookmarks',a);renderBMList()}
+
+/* ─── QUICK LINKS ─── */
+function renderQuickLinks(){
+  const ql=ls.get('quicklinks',[{name:'Google',url:'https://google.com'},{name:'GitHub',url:'https://github.com'},{name:'YouTube',url:'https://youtube.com'}]);
+  return `<div class="t-row">
+    <input class="t-input" id="ql-name" placeholder="Label">
+    <input class="t-input" id="ql-url" placeholder="https://…">
+    <button class="btn btn-primary" onclick="addQL()">Add</button>
+  </div>
+  <div id="ql-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:12px">${ql.map((q,i)=>`<a href="${escHtml(q.url)}" target="_blank" class="card" style="text-align:center;padding:14px 10px"><div style="font-size:1.3rem">🔗</div><div style="font-size:.8rem;font-weight:700;margin-top:6px">${escHtml(q.name)}</div><button onclick="event.preventDefault();removeQL(${i})" style="font-size:.7rem;color:var(--text3);background:none;margin-top:4px">Remove</button></a>`).join('')}</div>`;
+}
+function addQL(){const n=document.getElementById('ql-name').value.trim();const u=document.getElementById('ql-url').value.trim();if(!n||!u)return;const a=ls.get('quicklinks',[]);a.push({name:n,url:u});ls.set('quicklinks',a);document.getElementById('ql-name').value='';document.getElementById('ql-url').value='';openTool('quicklinks')}
+function removeQL(i){const a=ls.get('quicklinks',[]);a.splice(i,1);ls.set('quicklinks',a);openTool('quicklinks')}
+
+/* ─── CLIPBOARD MANAGER ─── */
+function renderClipboard(){
+  return `<div class="t-row">
+    <textarea class="t-textarea" id="cb-in" style="min-height:80px" placeholder="Paste or type snippet…"></textarea>
+  </div>
+  <button class="btn btn-primary" onclick="saveCB()">Save Snippet</button>
+  <ul class="t-list" id="cb-list" style="margin-top:12px"></ul>`;
+}
+function afterRenderClipboard(){renderCBList()}
+function renderCBList(){
+  const ul=document.getElementById('cb-list');if(!ul)return;
+  const items=ls.get('clipboard',[]);
+  ul.innerHTML=items.map((it,i)=>`<li><span style="font-family:monospace;font-size:.82rem;flex:1">${escHtml(it).slice(0,60)}${it.length>60?'…':''}</span><button onclick="copyText('${it.replace(/'/g,"\\'")}')">📋</button><button onclick="removeCB(${i})">✕</button></li>`).join('');
+}
+function saveCB(){const v=document.getElementById('cb-in').value.trim();if(!v)return;const a=ls.get('clipboard',[]);a.unshift(v);ls.set('clipboard',a.slice(0,20));document.getElementById('cb-in').value='';renderCBList()}
+function removeCB(i){const a=ls.get('clipboard',[]);a.splice(i,1);ls.set('clipboard',a);renderCBList()}
+
+/* ─── REMINDER ─── */
+function renderReminder(){
+  return `<div class="t-row">
+    <input class="t-input" id="rem-text" placeholder="Reminder text…">
+    <input class="t-input" id="rem-time" type="datetime-local" style="width:auto">
+    <button class="btn btn-primary" onclick="addReminder()">Set</button>
+  </div>
+  <ul class="t-list" id="rem-list"></ul>`;
+}
+function afterRenderReminder(){renderRemList()}
+function renderRemList(){
+  const ul=document.getElementById('rem-list');if(!ul)return;
+  const items=ls.get('reminders',[]);
+  ul.innerHTML=items.map((r,i)=>`<li><span>${escHtml(r.text)}</span><span style="font-size:.75rem;color:var(--text3)">${new Date(r.time).toLocaleString()}</span><button onclick="removeRem(${i})">✕</button></li>`).join('');
+}
+function addReminder(){
+  const t=document.getElementById('rem-text').value.trim();const ti=document.getElementById('rem-time').value;if(!t||!ti)return;
+  const a=ls.get('reminders',[]);a.push({text:t,time:ti});ls.set('reminders',a);
+  const delay=new Date(ti)-Date.now();if(delay>0)setTimeout(()=>alert('🔔 Reminder: '+t),delay);
+  document.getElementById('rem-text').value='';document.getElementById('rem-time').value='';renderRemList();
+}
+function removeRem(i){const a=ls.get('reminders',[]);a.splice(i,1);ls.set('reminders',a);renderRemList()}
+
+/* ─── HABIT TRACKER ─── */
+function renderHabit(){
+  return `<div class="t-row">
+    <input class="t-input" id="ht-in" placeholder="New habit…" onkeydown="if(event.key==='Enter')addHabit()">
+    <button class="btn btn-primary" onclick="addHabit()">Add</button>
+  </div>
+  <div id="ht-list" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>`;
+}
+function afterRenderHabit(){renderHabitList()}
+function renderHabitList(){
+  const el=document.getElementById('ht-list');if(!el)return;
+  const habits=ls.get('habits',[]);const today=new Date().toDateString();
+  el.innerHTML=habits.map((h,i)=>{
+    const streak=h.streak||0;const doneToday=(h.lastDone===today);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2)">
+      <button onclick="doHabit(${i})" style="width:28px;height:28px;border-radius:50%;background:${doneToday?'var(--green)':'var(--glass2)'};border:2px solid ${doneToday?'var(--green)':'var(--border)'};color:${doneToday?'#111':'var(--text3)'};font-size:.9rem;flex-shrink:0">✓</button>
+      <span style="flex:1;font-size:.9rem">${escHtml(h.name)}</span>
+      <span style="font-size:.78rem;color:var(--accent)">🔥 ${streak}</span>
+      <button onclick="removeHabit(${i})" style="background:none;color:var(--text3)">✕</button>
+    </div>`;
+  }).join('');
+}
+function addHabit(){const el=document.getElementById('ht-in');if(!el.value.trim())return;const a=ls.get('habits',[]);a.push({name:el.value.trim(),streak:0,lastDone:''});ls.set('habits',a);el.value='';renderHabitList()}
+function doHabit(i){const a=ls.get('habits',[]);const today=new Date().toDateString();if(a[i].lastDone===today)return;const yesterday=new Date(Date.now()-86400000).toDateString();a[i].streak=(a[i].lastDone===yesterday)?(a[i].streak||0)+1:1;a[i].lastDone=today;ls.set('habits',a);renderHabitList()}
+function removeHabit(i){const a=ls.get('habits',[]);a.splice(i,1);ls.set('habits',a);renderHabitList()}
+
+/* ─── WATER TRACKER ─── */
+function renderWater(){
+  const w=ls.get('water',{date:'',count:0});const today=new Date().toDateString();
+  if(w.date!==today){w.date=today;w.count=0;ls.set('water',w)}
+  return `<div style="text-align:center;padding:10px 0">
+    <div class="t-big" id="wt-count">${w.count}</div>
+    <div style="color:var(--text3);margin-bottom:20px">glasses of water today (goal: 8)</div>
+    <progress id="wt-progress" value="${w.count}" max="8" style="margin-bottom:20px"></progress>
+    <div class="t-row" style="justify-content:center">
+      <button class="btn btn-primary" onclick="addWater()">+ Add Glass 💧</button>
+      <button class="btn btn-ghost" onclick="removeWater()">- Remove</button>
+    </div>
+    <div style="margin-top:16px;font-size:.85rem;color:var(--text3)" id="wt-msg"></div>
+  </div>`;
+}
+function addWater(){
+  const w=ls.get('water',{date:new Date().toDateString(),count:0});w.count=Math.min(w.count+1,20);ls.set('water',w);
+  const c=document.getElementById('wt-count'),p=document.getElementById('wt-progress'),m=document.getElementById('wt-msg');
+  if(c)c.textContent=w.count;if(p)p.value=w.count;
+  if(m)m.textContent=w.count>=8?'🎉 Daily goal reached!':''
+}
+function removeWater(){
+  const w=ls.get('water',{date:new Date().toDateString(),count:0});w.count=Math.max(0,w.count-1);ls.set('water',w);
+  const c=document.getElementById('wt-count'),p=document.getElementById('wt-progress');
+  if(c)c.textContent=w.count;if(p)p.value=w.count;
+}
+
+/* ─── MOOD TRACKER ─── */
+const MOODS=[{e:'😄',l:'Great'},{e:'🙂',l:'Good'},{e:'😐',l:'OK'},{e:'😔',l:'Low'},{e:'😤',l:'Stressed'}];
+function renderMood(){
+  const log=ls.get('moodlog',[]).slice(-7).reverse();
+  return `<div class="mood-btns" id="mood-btns">${MOODS.map(m=>`<button class="mood-btn" onclick="logMood('${m.l}','${m.e}')" title="${m.l}">${m.e}</button>`).join('')}</div>
+  <div class="t-label">Recent Log</div>
+  <div class="mood-log">${log.map(e=>`<div class="mood-entry"><span>${e.emoji}</span><span>${e.mood}</span><span style="margin-left:auto">${e.time}</span></div>`).join('')}</div>`;
+}
+function logMood(mood,emoji){
+  const a=ls.get('moodlog',[]);a.push({mood,emoji,time:new Date().toLocaleString()});ls.set('moodlog',a);
+  const el=document.getElementById('mood-btns');if(el)openTool('mood');
+}
+
+/* ─── EXPENSE TRACKER ─── */
+function renderExpense(){
+  const items=ls.get('expenses',[]);const total=items.reduce((s,i)=>s+i.amount,0);
+  return `<div class="t-row">
+    <input class="t-input" id="exp-name" placeholder="Description">
+    <input class="t-input" id="exp-amt" type="number" placeholder="Amount" style="width:120px">
+    <select class="t-select" id="exp-type"><option>💸 Expense</option><option>💰 Income</option></select>
+    <button class="btn btn-primary" onclick="addExpense()">Add</button>
+  </div>
+  <div class="t-grid2" style="margin:12px 0">
+    <div class="t-stat"><div class="val" id="exp-total" style="color:var(--accent)">₹${total.toFixed(2)}</div><div class="lbl">Balance</div></div>
+    <div class="t-stat"><div class="val" id="exp-count">${items.length}</div><div class="lbl">Entries</div></div>
+  </div>
+  <ul class="t-list" id="exp-list" style="max-height:200px;overflow-y:auto">${items.slice(-10).reverse().map((e,i)=>`<li><span>${e.type} ${escHtml(e.name)}</span><span style="color:${e.type==='💸 Expense'?'var(--red)':'var(--green)'};font-weight:700">${e.type==='💸 Expense'?'-':'+'}${Math.abs(e.amount).toFixed(2)}</span></li>`).join('')}</ul>
+  <button class="btn btn-danger" style="margin-top:12px" onclick="ls.set('expenses',[]);openTool('expense')">Clear All</button>`;
+}
+function addExpense(){
+  const n=document.getElementById('exp-name').value.trim();const a=parseFloat(document.getElementById('exp-amt').value);const t=document.getElementById('exp-type').value;
+  if(!n||isNaN(a))return;const items=ls.get('expenses',[]);
+  items.push({name:n,amount:t==='💸 Expense'?-Math.abs(a):Math.abs(a),type:t});ls.set('expenses',items);
+  document.getElementById('exp-name').value='';document.getElementById('exp-amt').value='';openTool('expense');
+}
+
+/* ─── DAILY PLANNER ─── */
+function renderPlanner(){
+  const slots=['6:00 AM','7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM','9:00 PM'];
+  const saved=ls.get('planner',{});
+  return `<div style="display:flex;flex-direction:column;gap:6px;max-height:400px;overflow-y:auto">
+    ${slots.map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:4px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:.78rem;color:var(--text3);width:68px;flex-shrink:0">${s}</span>
+      <input class="t-input" style="flex:1;padding:6px 10px;font-size:.85rem" placeholder="—" value="${escHtml(saved[s]||'')}" oninput="savePlanner('${s}',this.value)">
+    </div>`).join('')}
+  </div>`;
+}
+function savePlanner(slot,val){const p=ls.get('planner',{});p[slot]=val;ls.set('planner',p)}
+
+/* ─── CALENDAR ─── */
+function renderCalendar(){
+  const now=new Date();
+  return `<div id="cal-wrap">${buildCalendar(now.getFullYear(),now.getMonth())}</div>`;
+}
+function buildCalendar(y,m){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const first=new Date(y,m,1).getDay();const days=new Date(y,m+1,0).getDate();const today=new Date();
+  let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <button class="btn btn-ghost" onclick="navCal(${y},${m-1})">◀</button>
+    <span style="font-family:var(--font-head);font-weight:700">${months[m]} ${y}</span>
+    <button class="btn btn-ghost" onclick="navCal(${y},${m+1})">▶</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center">
+    ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div style="font-size:.72rem;font-weight:700;color:var(--text3);padding:4px">${d}</div>`).join('')}
+    ${Array(first).fill('<div></div>').join('')}
+    ${Array.from({length:days},(_,i)=>{const d=i+1;const isToday=today.getFullYear()===y&&today.getMonth()===m&&today.getDate()===d;return `<div style="padding:6px 2px;border-radius:8px;font-size:.85rem;cursor:default;${isToday?'background:var(--accent);color:#fff;font-weight:700':''}">${d}</div>`}).join('')}
+  </div>`;
+  return html;
+}
+function navCal(y,m){if(m<0){m=11;y--}if(m>11){m=0;y++}const el=document.getElementById('cal-wrap');if(el)el.innerHTML=buildCalendar(y,m)}
+
+/* ─── WHITEBOARD ─── */
+function renderWhiteboard(){
+  return `<div class="wb-tools">
+    <div class="wb-color active" style="background:#5b8def" onclick="setWBColor('#5b8def',this)"></div>
+    <div class="wb-color" style="background:#fff" onclick="setWBColor('#ffffff',this)"></div>
+    <div class="wb-color" style="background:#ef4f6a" onclick="setWBColor('#ef4f6a',this)"></div>
+    <div class="wb-color" style="background:#00d4aa" onclick="setWBColor('#00d4aa',this)"></div>
+    <div class="wb-color" style="background:#f6c90e" onclick="setWBColor('#f6c90e',this)"></div>
+    <div class="wb-color" style="background:#7c5ce4" onclick="setWBColor('#7c5ce4',this)"></div>
+    <div class="wb-sz"><input type="range" id="wb-size" min="1" max="30" value="3" style="accent-color:var(--accent)"><span id="wb-sz-val">3px</span></div>
+    <button class="btn btn-ghost" id="wb-eraser" onclick="toggleEraser()">Eraser</button>
+    <button class="btn btn-danger" onclick="clearWB()">Clear</button>
+  </div>
+  <canvas id="wb-canvas" height="320"></canvas>`;
+}
+function afterRenderWhiteboard(){
+  const c=document.getElementById('wb-canvas');if(!c)return;
+  c.width=c.offsetWidth||600;
+  const ctx=c.getContext('2d');let drawing=false,erasing=false,color='#5b8def';
+  document.getElementById('wb-size').oninput=function(){document.getElementById('wb-sz-val').textContent=this.value+'px'};
+  window.wbCtx=ctx;window.wbColor=color;window.wbErasing=false;
+  function pos(e){const r=c.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}}
+  function start(e){drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)}
+  function move(e){
+    if(!drawing)return;e.preventDefault();const p=pos(e);
+    ctx.lineWidth=parseInt(document.getElementById('wb-size').value);
+    ctx.lineCap='round';ctx.strokeStyle=window.wbErasing?'#0d1120':window.wbColor;
+    ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y);
+  }
+  function end(){drawing=false;ctx.beginPath()}
+  c.addEventListener('mousedown',start);c.addEventListener('mousemove',move);c.addEventListener('mouseup',end);c.addEventListener('mouseleave',end);
+  c.addEventListener('touchstart',e=>{e.preventDefault();start(e)},{passive:false});c.addEventListener('touchmove',e=>{e.preventDefault();move(e)},{passive:false});c.addEventListener('touchend',end);
+}
+function setWBColor(c,el){window.wbColor=c;window.wbErasing=false;document.querySelectorAll('.wb-color').forEach(e=>e.classList.remove('active'));el.classList.add('active')}
+function toggleEraser(){window.wbErasing=!window.wbErasing;document.getElementById('wb-eraser').style.background=window.wbErasing?'var(--red)':''}
+function clearWB(){const c=document.getElementById('wb-canvas');if(c&&window.wbCtx)window.wbCtx.clearRect(0,0,c.width,c.height)}
+
+/* ─── STICKY NOTES ─── */
+const STICKY_COLORS=['#fef08a','#bbf7d0','#bfdbfe','#fecaca','#e9d5ff','#fed7aa'];
+function renderSticky(){
+  const notes=ls.get('stickynotes',[]);
+  return `<button class="btn btn-primary" onclick="addSticky()">+ New Note</button>
+  <div class="sticky-board" id="sticky-board">${notes.map((n,i)=>`<div class="sticky" style="background:${n.color}"><button class="sticky-del" onclick="removeSticky(${i})">✕</button><textarea style="color:#111;font-family:var(--font-body)" oninput="editSticky(${i},this.value)">${escHtml(n.text)}</textarea></div>`).join('')}</div>`;
+}
+function addSticky(){const a=ls.get('stickynotes',[]);a.push({text:'',color:STICKY_COLORS[a.length%STICKY_COLORS.length]});ls.set('stickynotes',a);openTool('sticky')}
+function editSticky(i,v){const a=ls.get('stickynotes',[]);a[i].text=v;ls.set('stickynotes',a)}
+function removeSticky(i){const a=ls.get('stickynotes',[]);a.splice(i,1);ls.set('stickynotes',a);openTool('sticky')}
+
+/* ─── DIMMER ─── */
+let dimmerDiv=null;
+function renderDimmer(){
+  return `<div style="text-align:center;padding:10px 0">
+    <p style="color:var(--text2);margin-bottom:20px">Reduce screen brightness with an overlay.</p>
+    <div class="t-row" style="justify-content:center">
+      <label style="color:var(--text2)">Opacity:</label>
+      <input type="range" id="dim-opacity" min="0" max="0.9" step="0.05" value="0.5" style="accent-color:var(--accent);flex:1;max-width:200px" oninput="updateDimmer()">
+      <span id="dim-val" style="color:var(--accent);font-weight:700">50%</span>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <button class="btn btn-primary" onclick="enableDimmer()">Enable Dimmer</button>
+      <button class="btn btn-danger" onclick="disableDimmer()">Disable</button>
+    </div>
+  </div>`;
+}
+function enableDimmer(){
+  if(!dimmerDiv){dimmerDiv=document.createElement('div');dimmerDiv.style.cssText='position:fixed;inset:0;background:#000;pointer-events:none;z-index:9998';document.body.appendChild(dimmerDiv)}
+  dimmerDiv.style.opacity=document.getElementById('dim-opacity').value;
+}
+function updateDimmer(){document.getElementById('dim-val').textContent=Math.round(document.getElementById('dim-opacity').value*100)+'%';if(dimmerDiv)dimmerDiv.style.opacity=document.getElementById('dim-opacity').value}
+function disableDimmer(){if(dimmerDiv){dimmerDiv.remove();dimmerDiv=null}}
+
+/* ═══════════════════════════════════════════
+   AFTER RENDER DISPATCHER
+═══════════════════════════════════════════ */
+function afterRender(id){
+  const map={todo:afterRenderTodo,daily:afterRenderDaily,eisenhower:afterRenderEisenhower,kanban:afterRenderKanban,flashcards:afterRenderFlashcards,bookmarks:afterRenderBookmarks,clipboard:afterRenderClipboard,reminder:afterRenderReminder,habit:afterRenderHabit,converter:afterRenderConverter,gradient:afterRenderGradient,decision:afterRenderDecision,timezone:afterRenderTimezone,whiteboard:afterRenderWhiteboard};
+  if(map[id])map[id]();
+}
+
+/* ═══════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════ */
+function fmtTime(s){return `${pad(Math.floor(s/60))}:${pad(s%60)}`}
+function pad(n){return String(n).padStart(2,'0')}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function copyEl(id){const el=document.getElementById(id);if(el)copyText(el.textContent)}
+function copyText(t){navigator.clipboard.writeText(t).then(()=>{/* silent */}).catch(()=>{const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove()})}
+</script>
+</body>
+</html>
